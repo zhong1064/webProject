@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      table {
+        width: 400px;
+        height: 200px;
+        border: 1px solid #333;
+      }
+      th {
+        height: 30px;
+        border: 1px solid #000;
+      }
+      td {
+        border: 1px solid #000;
+      }
+    </style>
+  </head>
+  <body>
+    <table cellspacing="0">
+      <thead>
+        <tr>
+          <th>姓名</th>
+          <th>科目</th>
+          <th>成绩</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
+  <script>
+    var datas = [
+      {
+        name: "小明",
+        subject: "javascript",
+        score: 100
+      },
+      {
+        name: "小红",
+        subject: "javascript",
+        score: 90
+      },
+      {
+        name: "小黑",
+        subject: "javascript",
+        score: 88
+      },
+      {
+        name: "小黄",
+        subject: "javascript",
+        score: 85
+      }
+    ];
+    var tbody = document.querySelector("tbody");
+    for (var i = 0; i < datas.length; i++) {
+      var tr = document.createElement("tr");
+      tbody.appendChild(tr);
+      //行里面创建单元格 td的数量取决于每个对象里面的属性个数 for循环遍历对象
+      for (var k in datas[i]) {
+        var td = document.createElement("td");
+        //把对象里面的属性值给td
+        td.innerHTML = datas[i][k];
+        tr.appendChild(td);
+      }
+      //创建有2个字的单元格
+      var td = document.createElement("td");
+      td.innerHTML = '<a hred="javascript:;">删除</a>';
+      tr.appendChild(td);
+    }
+    //把所有的a获取过来 并给点击事件
+    var as = document.querySelectorAll("a");
+    for (var i = 0; i < as.length; i++) {
+      as[i].onclick = function() {
+        tbody.removeChild(this.parentNode.parentNode);
+      };
+    }
+  </script>
+</html>
