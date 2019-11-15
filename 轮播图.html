@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>轮播图</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        ul {
+            list-style: none;
+        }
+        .box {
+            width: 730px;
+            height: 454px;
+            padding: 8px;
+            border: 1px solid green;
+            margin: 100px auto;
+        }
+
+        .inner {
+            position: relative;
+            overflow: hidden;
+            height: 454px;
+        }
+
+        #imglist {
+            width: 700%;
+            position: absolute;
+            left: 0;
+            transition: left 300ms linear;
+        }
+
+        li {
+            float: left;
+        }
+
+        .list {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            margin-left: -85px;
+        }
+
+        .list i {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #333;
+            float: left;
+            font-style: normal;
+            line-height: 20px;
+            font-size: 14px;
+            text-align: center;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .list i:last-child {
+            margin-right: 0;
+        }
+
+        .list i.current {
+            background-color: skyblue;
+            color: #fff;
+        }
+
+        .arrow {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            margin-top: -30px;
+        }
+
+        .arrow-left,
+        .arrow-right {
+            width: 30px;
+            height: 60px;
+            position: absolute;
+            font: 20px/60px "consolas";
+            color: #fff;
+            background-color: rgba(0, 0, 0, .3);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .arrow-right {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="box" id="box">
+        <div class="inner" id="inner">
+            <ul id="imglist">
+                <li><a href="#"><img src="images/1.jpg" alt=""></a></li>
+                <li><a href="#"><img src="images/2.jpg" alt=""></a></li>
+                <li><a href="#"><img src="images/3.jpg" alt=""></a></li>
+                <li><a href="#"><img src="images/4.jpg" alt=""></a></li>
+                <li><a href="#"><img src="images/5.jpg" alt=""></a></li>
+                <li><a href="#"><img src="images/6.jpg" alt=""></a></li>
+            </ul>
+            <div class="list">
+                <i class="current">1</i>
+                <i>2</i>
+                <i>3</i>
+                <i>4</i>
+                <i>5</i>
+                <i>6</i>
+            </div>
+            <div class="arrow">
+                <span class="arrow-left">&lt;</span>
+                <span class="arrow-right">&gt;</span>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+     /* 
+      效果： 
+        2.左右按钮的点击切换
+    
+        最终也是希望ul可以被设置left属性，实现左右移动效果
+        left属性 = 图片张数 * 图片宽度 * -1
+    
+        2.1 获取元素
+        2.2 注册点击事件
+        2.3 让ul的left改变
+                ul的left = 图片张数 * 图片宽度 * -1
+                设置ul的left就行
+    */
+    // 获取元素
+    let ul = document.querySelector('#imglist');
+    let list = document.querySelectorAll('.list > i');
+    let leftBtn = document.querySelector('.arrow-left');
+    let rightBtn = document.querySelector('.arrow-right');
+    let imgWidth = document.querySelector('.inner').offsetWidth;
+   
+    // 定义一个变量 表示当前第几张图片
+    let currentImgIndex = 0;
+    
+    //注册鼠标点击事件
+  rightBtn.onclick = function() {
+      if(currentImgIndex == ul.children.length-1) {
+          currentImgIndex = -1;
+      }
+      // 当我们点击右边按钮，索引++
+      currentImgIndex++;
+      //算出 ul的位置 设置ul的位置
+      let target = imgWidth * currentImgIndex * -1;
+      ul.style.left = target + 'px';
+      
+      // 排他 设置小圆点的颜色
+     list.forEach(function(e){
+         e.classList.remove('current');
+     })
+     // 选中的加上颜色
+     list[currentImgIndex].classList.add('current');
+  }
+      //点击左边的按钮
+      leftBtn.onclick = function() {
+          if(currentImgIndex === 0) {
+              currentImgIndex = ul.children.length;
+          }
+          // 当点击左边是索引要减少
+        currentImgIndex--;
+         // 算出ul的位置，设置ul的位置
+          let target = imgWidth * currentImgIndex * -1;
+          ul.style.left = target + 'px';
+          // 排他思想 清除小圆点颜色
+          list.forEach(function(e){
+              e.classList.remove('current');
+          })
+          // 把选中的小圆点加上颜色
+          list[currentImgIndex].classList.add('current');
+      }
+      // 自动轮播
+      
+      let timer = setInterval(function(){
+         //给右边按钮设置定时器
+          rightBtn.onclick();
+      }, 1500);
+    // 给整个最大的BOX盒子注册移入 移出事件
+    let box = document.querySelector('.box');
+    box.onmouseover = function() {
+        // 清除定时器
+        clearInterval(timer);
+    }
+    box.onmouseout = function() {
+        timer = setInterval(function() {
+            rightBtn.onclick();
+        }, 1500)
+    }
+  // 序号控制轮播
+  // 注册鼠标移入事件
+   list.forEach(function(e,i) {
+        e.onmouseover = function() {
+            // 计算 ul的位置 并移动UL
+            let target = imgWidth * i * -1;
+            ul.style.left = target + 'px';
+            // 排他思想 先把所有小点的class去除
+            list.forEach(function(e){
+                e.classList.remove('current');
+            })
+            // 当前选中的加上样式
+            this.classList.add('current');
+        }
+   }) 
+
+
+</script>
+</html>
