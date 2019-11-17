@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        };
+        ul {
+            list-style: none;
+        }
+        .main {
+            max-width: 750px;
+            margin: 0 auto;
+            background-color: pink;
+            height: 100vh;
+        }
+        .swiper {
+            overflow: hidden;
+        }
+        .swiper ul {
+            display: flex;
+            width: 800%;
+            transition: transform 400ms;
+            
+        }
+        .swiper li {
+            flex: 1;
+        }
+        img {
+            width: 100%;
+        }
+ 
+     </style>
+</head>
+<body>
+    <div class="main">
+        <div class="swiper">
+            <ul>
+                <li><a href="#"><img src="./images/6.jpg" alt=""></a></li>
+                <li><a href="#"><img src="./images/1.jpg" alt=""></a></li>
+                <li><a href="#"><img src="./images/2.jpg" alt=""></a></li>
+                <li><a href="#"><img src="./images/3.jpg" alt=""></a></li>
+                <li><a href="#"><img src="./images/4.jpg" alt=""></a></li>
+                <li><a href="#"><img src="./images/5.jpg" alt=""></a></li>
+                <li><a href="#"><img src="./images/6.jpg" alt=""></a></li>
+                <li><a href="#"><img src="./images/1.jpg" alt=""></a></li>
+            </ul>
+        </div>
+    </div> 
+</body>
+<script src="./07-zepto.js"></script>
+<script src="./08-touch.js"></script>
+ <script>
+    // 获取元素
+    let ul = document.querySelector('.swiper > ul');
+    let imgWidth = document.querySelector('.swiper').clientWidth;
+    let currentIndex = 1;
+    //注册左滑事件
+    $('.swiper').on('swipeLeft',function(){
+        // 先判断如果达到滑动的最大值 就暂停滑动
+        if(currentIndex == ul.children.length-1){
+            return;
+        };
+        // 每次左滑时 先让计数器++
+        currentIndex++;
+        //计算ul每次移动距离
+        let target = currentIndex * imgWidth * -1;
+        ul.style.transform = `translate(${target}px)`;
+    })
+     //注册右滑事件
+    $('.swiper').on('swipeRight',function(){
+        // 先判断如果滑动到 索引的最小值 暂停滑动
+        if(currentIndex === 0){
+            return;
+        }
+        //每次滑动时索引递减
+        currentIndex--;
+        //计算ul每次移动距离
+        let target = currentIndex * imgWidth * -1;
+        ul.style.transform = ` translate(${target}px)`;
+    })
+     //开始设置一个位移 让ul显示索引为1的图片
+        //先去掉过渡效果 然后移动ul 再用定时器恢复过渡效果
+        ul.style.transitionDuration = '0s';
+        ul.style.transform = `translate(${-imgWidth}px)`;
+        setTimeout(function(){
+            ul.style.transitionDuration = '';
+        },10)
+     // 实现无缝滚动
+   // 给UL注册动结束事件
+   ul.addEventListener('transitionend',function(){
+      // 判断是否已经是当前的最后一张(用户认为是第一张)
+    // 立刻以 迅雷不及掩耳 的速度把最后一张换行真正的第一张  
+     if(currentIndex === ul.children.length-1){
+         // 把索引同步
+         currentIndex = 1;
+        //先去掉过渡效果 然后把图片重置为第一张 再用定时器恢复过渡效果
+        ul.style.transitionDuration = '0s';
+        ul.style.transform = `translate(${-imgWidth}px)`;
+        setTimeout(function(){
+            ul.style.transitionDuration = '';
+        },10)
+     }
+     // 判断是否达到了真实的第一张
+     if(currentIndex === 0){
+         //先把过渡去掉
+         ul.style.transitionDuration = '0s';
+         // 把索引指向真实的第六张
+         currentIndex = ul.children.length -2;
+         //把ul设置到第六张的位置
+         ul.style.transform = `translate(${currentIndex * imgWidth *-1}px)`;
+         //用延时把过渡加回来
+         setTimeout(function(){
+           ul.style.transitionDuration = '';
+         },10)
+
+     }
+   })
+ </script>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+        }
+    
+        header {
+          height: 100px;
+          background-color: red;
+        }
+    
+        img {
+          width: 100%;
+          vertical-align: middle;
+        }
+    
+        ul {
+          list-style: none;
+          display: flex;
+          width: 800%;
+        }
+    
+        .move {
+          transition: transform 400ms linear;
+        }
+    
+        li {
+          flex: 1;
+        }
+    
+        .cour {
+          max-width: 760px;
+          overflow: hidden;
+        }
+      </style>
+</head>
+<body>
+    <main>
+        <div class="cour">
+          <ul class="move">
+            <li><a href="#"><img src="./images/6.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/1.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/2.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/3.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/4.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/5.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/6.jpg" alt=""></a></li>
+            <li><a href="#"><img src="./images/1.jpg" alt=""></a></li>
+          </ul>
+        </div>
+    </main> 
+</body>
+<script src="./07-zepto.js"></script>
+<script src="./08-touch.js"></script>
+<script>
+    /* 
+    效果：
+      1.左滑动
+        让图片从n到n+1张
+      2.右划动
+        让图片从n到n-1张
+  
+    之前的轮播图让我们知道换一个公式：
+      ul的位置 = 索引 * 图片宽度 * -1
+  */ 
+  // 获取元数
+  let ul = document.querySelector('.move');
+  let imgWidth =  $('.cour').width(); 
+  let currentIndex = 1;
+  let target = imgWidth * currentIndex * -1;
+  //先使图片移到索引1的位置
+  //先取消动画过渡
+  ul.classList.remove('move')
+  ul.style.transform = `translate(${target}px)`;
+  //在用定时器加上动画过渡
+ setTimeout(function(){
+   ul.classList.add('move')
+ },10);
+ // 获取ul 注册左滑事件
+ $('ul').on('swipeLeft', function(){
+     //防止滑动过快造成BUG
+     if(currentIndex== ul.children.length -1){
+         return;
+     }
+     currentIndex++;
+     let target = imgWidth * currentIndex * -1;
+     
+     ul.style.transform = `translate(${target}px)`;
+     setTimeout(function(){
+  
+ },10);
+ })
+ //注册右滑事件
+ $('ul').on('swipeRight', function(){
+     //防止滑动过快造成BUG
+     if(currentIndex == 0){
+         return;
+     }
+     currentIndex--;
+     let target = imgWidth * currentIndex * -1;
+     ul.style.transform = `translate(${target}px)`;
+ })
+// 为了实现无缝滚动
+  // 1 把第一张，复制一份，放到最后，然后我们给ul注册一个过渡结束事件，如果过渡动画到达了最后一张(用户认为的第一张)，立刻悄悄的把最后一张，替换为实际的第一张
+  ul.addEventListener('transitionend',function(){
+       
+      // 先判断左滑动current是否已经是最后一张
+      if(currentIndex === ul.children.length-1){
+          currentIndex = 1;
+          let target = imgWidth * currentIndex * -1;
+          ul.style.transform = `translate(${target}px)`;
+          ul.classList.remove('move');
+          setTimeout(function(){
+              ul.classList.add('move')
+          },10)
+      }
+      //判断右滑动current是否到了第0个
+
+      if(currentIndex === 0){
+          currentIndex = ul.children.length -2;
+          let target = imgWidth * currentIndex * -1;
+          ul.style.transform = `translate(${target}px)`;
+          ul.classList.remove('move');
+          setTimeout(function(){
+              ul.classList.add('move')
+          },10)
+      }
+  })
+</script>
+</html>
